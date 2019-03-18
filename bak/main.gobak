@@ -1,0 +1,468 @@
+package main
+
+import (
+	"./xlog"
+	// "context"
+	// "crypto/ecdsa"
+	_ "encoding/hex"
+	"fmt"
+	"log"
+	// "math/big"
+	// "time"
+	"./martini"
+	"net/http"
+	// "./eosgo-client/common"
+	// "./eosgo-client/rpc"
+	yoyow "./yoyow"
+	"encoding/json"
+	eos "github.com/eoscanada/eos-go"
+	// yoyow "github.com/scorum/bitshares-go"
+	// "github.com/scorum/bitshares-go/types"
+	"strconv"
+)
+
+func init() {
+	_dir := "./keys"
+	xlog.Create(_dir)
+	eos_dir := "./keys/eos"
+	xlog.Create(eos_dir)
+}
+
+type Configuration struct {
+	NODE_PRODUCER_NAME string
+	NODE_PUB_KEY       string
+	// ENV_EOS_SRC_PATH			 string
+	// ENV_EOSGO_PATH				 string
+	API_PORT       int
+	API_URL        string
+	LOCAL_API_PORT int
+	LOCAL_API_URL  string
+	API_METHOD     string
+	// LOGGING_MODE                 string
+	WALLET_NAME                  string
+	WALLET_PRIV_KEY              string
+	TRANSACTION_EXPIRATION_DELAY int
+}
+type YoyowConfiguration struct {
+	NODE_PRODUCER_NAME           string
+	NODE_PUB_KEY                 string
+	API_PORT                     int
+	API_URL                      string
+	LOCAL_API_PORT               int
+	LOCAL_API_URL                string
+	API_METHOD                   string
+	WALLET_NAME                  string
+	WALLET_PRIV_KEY              string
+	TRANSACTION_EXPIRATION_DELAY int
+}
+type OmniConf struct {
+	Host       string `json:"host"`
+	Port       int    `json:"port"`
+	Username   string `json:"username"`
+	Password   string `json:"password"`
+	Account    string `json:"account"`
+	Tokenid    int64  `json:"tokenid"`
+	WalletPass string `json:"walletPass"`
+	Net        string `json:"net"`
+}
+type Conf struct {
+	ListenPort string             `json:"listenPort"`
+	Httpuser   string             `json:"httpuser"`
+	Httppass   string             `json:"httppass"`
+	Omni       OmniConf           `json:"omni"`
+	Eos        Configuration      `json:"eos"`
+	Yoyow      YoyowConfiguration `json:"yoyow"`
+}
+
+var cfg Conf //proxy.Config
+
+func logPanics(function func(http.ResponseWriter,
+	*http.Request)) func(http.ResponseWriter, *http.Request) {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		defer func() {
+			if x := recover(); x != nil {
+				log.Println(fmt.Sprintf("[%v] caught panic: %v", request.RemoteAddr, x))
+			}
+		}()
+		function(writer, request)
+	}
+}
+
+func startMartini() {
+	// port:=fmt.Sprintf("%d",cfg.ListenPort)
+	m := martini.Classic()
+	m.Use(auth_BasicFunc(func(username, password string) bool {
+		return auth_SecureCompare(username, cfg.Httpuser) && auth_SecureCompare(password, cfg.Httppass)
+	}))
+	// m.Get("/",logPanics(Handler))
+	m.Post("/", logPanics(Handler))           //for usdt
+	m.Post("/eos", logPanics(EosHandler))     //for eos
+	m.Post("/yoyow", logPanics(YoyowHandler)) //for eos
+	m.RunOnAddr(cfg.ListenPort)
+
+	m.Run()
+}
+
+// func startMartiniForEos() {
+// 	// port:=fmt.Sprintf("%d",cfg.Omni.ListenPort)
+// 	m := martini.Classic()
+// 	m.Use(auth_BasicFunc(func(username, password string) bool {
+// 		return auth_SecureCompare(username, cfg.Httpuser) && auth_SecureCompare(password, cfg.Httppass)
+// 	}))
+// 	// m.Get("/",logPanics(Handler))
+// 	m.Post("/eos", logPanics(EosHandler))
+// 	// m.Post("/pdf",logPanics(pdfHandler2))
+
+// 	m.RunOnAddr(cfg.ListenPort)
+
+// 	m.Run()
+// }
+func test() {
+	{
+		// addr:=getNewAddress()
+		// log.Println(addr)
+		// b,r,err:=getBalance("muHz43XhrgueKCdXpyhWnQ8EjRGYJWLxHJ")
+		// log.Println(b,":",r,":",err)
+		// h,err:=send("mn8furRD1up7RRPZJ71w5joXJzK5b7gsic","muBRPdoe1MWjTVHSrGa8PRTZTUisgjntp5","0.001","0.0001","test")
+		// log.Println("tx:",h," err:",err)
+	}
+	// {
+	// 	eosurl := cfg.Eos.API_METHOD + "://" + cfg.Eos.API_URL + ":" + strconv.Itoa(cfg.Eos.API_PORT)
+	// 	api := eos.New(eosurl)
+
+	// 	// infoResp, _ := api.GetInfo()
+	// 	// fmt.Println(infoResp)
+	// 	accountResp, _ := api.GetAccount(cfg.Eos.NODE_PRODUCER_NAME)
+	// 	fmt.Println("Permission for initn:", accountResp.Permissions[0].RequiredAuth.Keys)
+	// }
+	// {
+	// 	eosurl := cfg.Eos.API_METHOD + "://" + cfg.Eos.API_URL + ":" + strconv.Itoa(cfg.Eos.API_PORT)
+	// 	api := eos.New(eosurl)
+	// 	// func (api *API) GetCurrencyBalance(account AccountName, symbol string, code AccountName) (out []Asset, err error) {
+	// 	ass, err := api.GetCurrencyBalance("mseraccounts", "eos", "eosio.token")
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 		return
+	// 	}
+	// 	for i, v := range ass {
+	// 		fmt.Println(i, ":", v)
+	// 	}
+	// }
+	{
+		eosurl := cfg.Eos.API_METHOD + "://" + cfg.Eos.API_URL + ":" + strconv.Itoa(cfg.Eos.API_PORT)
+		// eosurl := "http://api.hkeos.com:80"
+		api := eos.New(eosurl)
+		if api == nil {
+			return
+		}
+
+		// (api *API) ABIJSONToBin(code AccountName, action Name, payload M) (out HexBytes, err error) {
+		// m := make(eos.M)
+		// // "from": "eosio",
+		// // "to": "noprom",
+		// // "quantity": "1.0000 EOS",
+		// // "memo": "created by noprom"
+		// m["from"] = "mseraccounts" //100eos
+		// m["to"] = "mseraccount2"   //0eos
+		// m["quantity"] = "1.0000 EOS"
+		// m["memo"] = "test from mseraccounts"
+		// ass, err := api.ABIJSONToBin("eosio.token", "transfer", m)
+		// if err != nil {
+		// 	fmt.Println(err)
+		// 	return
+		// }
+		// fmt.Println(hex.EncodeToString(ass))
+
+		// ///////////////////////getinfo GetInfo() (out *InfoResp, err error) {
+		// headinfo, err := api.GetInfo()
+		// if err != nil {
+		// 	fmt.Println(err)
+		// 	return
+		// }
+		// fmt.Println("headinfo:", headinfo.HeadBlockNum)
+
+		// ///////GetBlockByNum(num uint32) (out *BlockResp, err error)
+		// blockInfo, err := api.GetBlockByNum(headinfo.HeadBlockNum)
+		// if err != nil {
+		// 	fmt.Println(err)
+		// 	return
+		// }
+		// fmt.Println("BlockNum:", blockInfo.BlockNum)
+		// fmt.Println("RefBlockPrefix:", blockInfo.RefBlockPrefix)
+		// //////////////////////////////////////////////////////////////
+		// // Account       AccountName       `json:"account"`
+		// // Name          ActionName        `json:"name"`
+		// // Authorization []PermissionLevel `json:"authorization,omitempty"`
+		// // ActionData
+		// //
+		// actionData := eos.NewActionDataFromHexData(ass)
+		// pl, err := eos.NewPermissionLevel("mseraccounts@active")
+		// if err != nil {
+		// 	fmt.Println(err)
+		// 	return
+		// }
+		// action := eos.Action{
+		// 	Account:       "eosio.token",
+		// 	Name:          "transfer",
+		// 	Authorization: []eos.PermissionLevel{pl},
+		// 	ActionData:    actionData,
+		// }
+		// //////(api *API) SetSigner(s Signer)
+		// // NewWalletSigner(api *API, walletName string) *WalletSigner
+		// localeosurl := cfg.Eos.API_METHOD + "://" + cfg.Eos.LOCAL_API_URL + ":" + strconv.Itoa(cfg.Eos.LOCAL_API_PORT)
+		// localapi := eos.New(localeosurl)
+		// err = localapi.WalletUnlock(cfg.Eos.WALLET_NAME, cfg.Eos.WALLET_PRIV_KEY)
+		// if err != nil {
+		// 	fmt.Println(err)
+		// 	return
+		// }
+		// signer := eos.NewWalletSigner(localapi, cfg.Eos.WALLET_NAME)
+		// api.SetSigner(signer)
+		// ///////SignPushActions(a ...*Action) (out *PushTransactionFullResp///
+		// resp, err := api.SignPushActions(&action)
+		// if err != nil {
+		// 	fmt.Println(err)
+		// 	return
+		// }
+		// fmt.Println("TransactionID:", resp.TransactionID)
+		// ///////////////////////////////////////
+		// err = localapi.WalletLock(cfg.Eos.WALLET_NAME)
+		// if err != nil {
+		// 	fmt.Println(err)
+		// 	return
+		// }
+
+		// GetTransactions(name AccountName) (out *TransactionsResp
+		// trs, err := api.GetTransactions(eos.AccountName(cfg.Eos.NODE_PRODUCER_NAME))
+		// {
+		// 	trs, err := api.GetTransaction("1693b65c98737c81784e855406a078a8af60cdfdd4fffd151927bca94b7aafa6")
+		// 	// trs, err := api.GetTransactionRaw("1693b65c98737c81784e855406a078a8af60cdfdd4fffd151927bca94b7aafa6")
+		// 	if err != nil {
+		// 		fmt.Println(err)
+		// 		return
+		// 	}
+		// 	fmt.Println("trs:", trs)
+		// }
+		{
+			req := eos.GetActionsRequest{
+				// AccountName: eos.AccountName("eosluckydice"),
+				// AccountName: eos.AccountName("eosmetalbank"),
+				AccountName: eos.AccountName(cfg.Eos.NODE_PRODUCER_NAME),
+				Pos:         -1,
+				Offset:      -10,
+			}
+			// type ActionResp struct {
+			// 	GlobalSeq  int64       `json:"global_action_seq"`
+			// 	AccountSeq int64       `json:"account_action_seq"`
+			// 	BlockNum   uint32      `json:"block_num"`
+			// 	BlockTime  JSONTime    `json:"block_time"`
+			// 	Trace      ActionTrace `json:"action_trace"`
+			// }
+			// type ActionsResp struct {
+			// 	Actions               []ActionResp `json:"actions"`
+			// 	LastIrreversibleBlock uint32       `json:"last_irreversible_block"`
+			// }
+			actions, err := api.GetActions(req)
+
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			fmt.Println("actions:", len(actions.Actions))
+			for _, v := range actions.Actions {
+				// fmt.Println("BlockTime:", fmt.Sprintf("%q", v.BlockTime.Format(eos.JSONTimeFormat)))
+				fmt.Println("BlockNum:", v.BlockNum)
+				fmt.Println("TransactionID:", v.Trace.TransactionID.String())
+				actData := v.Trace.Action.ActionData.Data
+				dataMap, ok := actData.(map[string]interface{})
+				if !ok {
+					fmt.Println("dataMap not ok")
+					continue
+				}
+				from, ok := dataMap["from"].(string)
+				if !ok {
+					fmt.Println("from not ok")
+					continue
+				}
+				to, ok := dataMap["to"].(string)
+				if !ok {
+					fmt.Println("to not ok")
+					continue
+				}
+				quantity, ok := dataMap["quantity"].(string)
+				if !ok {
+					fmt.Println("quantity not ok")
+					continue
+				}
+				memo, ok := dataMap["memo"].(string)
+				if !ok {
+					fmt.Println("memo not ok")
+					continue
+				}
+				fmt.Println("from:", from, " to:", to, " quantity:", quantity, " memo:", memo)
+			}
+		}
+		// GetTransactions(name AccountName) (out *TransactionsResp
+		// fmt.Println("----------------------------------------------------------")
+		// {
+		// 	trs, err := api.GetTransactions(eos.AccountName("mydeostokens"))
+
+		// 	if err != nil {
+		// 		fmt.Println(err)
+		// 		return
+		// 	}
+		// 	fmt.Println("trs:", trs)
+		// }
+		// eos.RegisterAction(eos.AccountName("eosio.token"), eos.ActionName("transfer"), eos.Transfer{})
+		// type Transfer struct {
+		// 	From     eos.AccountName `json:"from"`
+		// 	To       eos.AccountName `json:"to"`
+		// 	Quantity eos.Asset       `json:"quantity"`
+		// 	Memo     string          `json:"memo"`
+		// }
+		// // fmt.Println("SeqNum:", v.SeqNum)
+		// packed := trs.Receipt.PackedTransaction.Packed
+		// if packed == nil {
+		// 	fmt.Println("packed==nil")
+		// 	return
+		// }
+		// transaction, err := packed.Unpack()
+		// if err != nil {
+		// 	fmt.Println(err)
+		// 	return
+		// }
+		// fmt.Println("-------------")
+		// for _, act := range transaction.Actions {
+		// 	// action := transaction.Actions[0]
+		// 	transfer, ok := act.Data.(*Transfer)
+		// 	if !ok {
+		// 		fmt.Println("act.Data.(*Transfer) not ok")
+		// 		return
+		// 	}
+		// 	fmt.Println("transfer.Memo:", transfer.Memo)
+		// }
+
+	}
+}
+func test2() {
+	type Employee struct {
+		Id   int
+		Name string
+	}
+	emp := Employee{0, "Adam"}
+
+	byte2, err := json.Marshal(emp)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Printf("Employee's secret message : %s\n", string(byte2))
+}
+func testYoyow() {
+
+	// rpc := yoyow.NewRPCClient("yoyow", "http://127.0.0.1:8090/rpc", "10s")
+	// {
+	// 	rpc := yoyow.NewRPCClient("yoyow", "http://127.0.0.1:8090/rpc", "10s")
+	// 	out, err := rpc.GetAccounts("244958118")
+	// 	fmt.Println(out, ":", err)
+	// }
+	// {
+	// 	rpc := yoyow.NewRPCClient("yoyow", "http://127.0.0.1:8090/rpc", "10s")
+	// 	out, err := rpc.GetBalance("244958118")
+	// 	fmt.Println(out, ":", err)
+	// }
+	{
+		rpc := yoyow.NewRPCClient("yoyow", "http://127.0.0.1:8091/rpc", "10s")
+		err := rpc.Unlocks("yoyow-pass")
+		if err != nil {
+			fmt.Println("unlock err")
+			// return
+		}
+		// change, points, balance, err := rpc.GetBalance("244958118")
+		// if err != nil {
+		// 	fmt.Println(err)
+		// 	return
+		// }
+		// fmt.Println("change:", change)
+		// fmt.Println("points:", points)
+		// fmt.Println("balance:", balance)
+
+		// ret, err := rpc.ColletcPoints("226369314", "244958118", "0.15")
+		// if err != nil {
+		// 	fmt.Println("ColletcPoints err:")
+		// }
+		// fmt.Println("ret:", ret)
+
+		// // }
+		// // {
+		// rpc := yoyow.NewRPCClient("yoyow", "http://127.0.0.1:8091/rpc", "10s")
+		// out, err := rpc.Transfer("244958118", "226369314", "1000", "test", "YOYO")
+		// fmt.Println(out, ":", err)
+		{
+			out, err := rpc.GetAccountHistory("244958118", "0", "3", "10") //返回 10 9 8
+			if err != nil {
+				fmt.Println("GetAccountHistory err:", err)
+				return
+			}
+
+			for _, v := range out {
+				fmt.Println(v.Sequence, ":", v.Memo, ":", v.Description)
+			}
+		}
+		{
+			out, err := rpc.GetInfo()
+			fmt.Println(out, ":", err)
+		}
+		// out, err := rpc.GetBestSequenceNumber("244958118")
+		// fmt.Println(out, ":", err)
+		// out, err = rpc.GetBestSequenceNumber("226369314")
+		// fmt.Println(out, ":", err)
+		// }
+		// // {
+		// // 	rpc := yoyow.NewRPCClient("yoyow", "http://127.0.0.1:8091/rpc", "10s")
+		err = rpc.Locks()
+		if err != nil {
+			fmt.Println(err)
+			// return
+		}
+	}
+	// url := cfg.Yoyow.API_METHOD + "://" + cfg.Yoyow.API_URL + ":" + strconv.Itoa(cfg.Yoyow.API_PORT)
+	// url := "ws://127.0.0.1:8090"
+	// // url := "wss://node.testnet.bitshares.eu"
+	// client, err := yoyow.NewClient(url)
+	// if err != nil {
+	// 	fmt.Println("newclient:", err)
+	// 	return
+	// }
+	// // chainID, err := client.Database.GetChainID()
+	// // (api *API) GetAccounts(names ...string) ([]*Account, error) {
+	// acc, err := client.Login.GetAccounts("244958118")
+	// if err != nil {
+	// 	fmt.Println(err, "failed to GetAccounts")
+	// }
+	// fmt.Println("acc:", acc)
+	//
+
+	// New(API_METHOD, API_URL, API_PORT string) *YoyowServer
+	// s := yoyow.New(cfg.Yoyow.API_METHOD, cfg.Yoyow.API_URL, strconv.Itoa(cfg.Yoyow.API_PORT))
+	// out, err := s.GetInfo()
+	// fmt.Println(out, ":", err)
+}
+func main() {
+	xlog.XX()
+	if !LoadConfig("config.toml", &cfg) {
+		return
+	}
+	// common.Config=cfg.Eos
+	// common.EOS_URL=cfg.Eos.API_METHOD + "://" + cfg.Eos.API_URL + ":" + strconv.Itoa(cfg.Eos.API_PORT)
+	log.Println(cfg)
+	// go start()
+	// test2()
+	// testYoyow()
+
+	startMartini()
+	// startMartiniForEos()
+	quit := make(chan bool)
+	<-quit
+}

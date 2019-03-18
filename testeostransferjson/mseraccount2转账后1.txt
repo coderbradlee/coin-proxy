@@ -1,0 +1,35 @@
+Balance: 
+5.5200 EOS
+9.0000 JUNGLE
+
+Account Info: 
+Created: 2018-10-08 13:42:41
+Last code Update: --
+
+Active Key: EOS7ULmcksapBYTXvjH62eDzCxiNtaciDzsbCzp8oh1cjGnN1KWTS
+Owner Key: EOS63MMLnGsbKhFEsWBzhRBC2Cnm3FAALSCpRFRRKa8ipePke98kX
+
+RAM used 3702 bytes / quota: 4074 bytes 
+
+NET bandwidth:
+staked: -1
+delegated: 100.0000 EOS 
+current: 393 / available: 19160401 bytes
+max: 19160794 bytes
+
+CPU bandwidth:
+staked: -1
+delegated: 100.0000 EOS
+current: 1463 / available: 3644520 time 
+max: 3645983 time
+
+Voter Info:
+Proxy: 
+Producers: 
+staked: 2000000
+last vote weight: 0.00000000000000000
+proxie vote weight: 0.00000000000000000
+is proxy: 0
+deferred trx id: undefined
+last unstake time: NaN-aN-aN aN:aN:aN
+unstaking: undefined

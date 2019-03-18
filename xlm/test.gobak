@@ -1,0 +1,51 @@
+package main
+
+import (
+	// "fmt"
+	// "github.com/stellar/go/keypair"
+	"github.com/stellar/go/clients/horizon"
+	// "io/ioutil"
+	"log"
+	// "net/http"
+)
+
+func main() {
+	// pair, err := keypair.Random()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// log.Println(pair.Seed())
+	// // SAV76USXIJOBMEQXPANUOQM6F5LIOTLPDIDVRJBFFE2MDJXG24TAPUU7
+	// log.Println(pair.Address())
+	// GCFXHS4GXL6BVUCXBWXGTITROWLVYXQKQLF4YH5O5JT3YZXCYPAFBJZB
+	// pair is the pair that was generated from previous example, or create a pair based on
+	// existing keys.
+	// address := pair.Address()
+	// seed：
+	// SCFOSUKP475FGFM4XOEWRPNSN5SBT3CUZQ6UN5357LG6ILZ3LYLXJ4JM
+	// public：
+	// GARCSHPPYFR65QADDT44IBUD7BXMQS4W2FDV5HEIIJPYALPO52FYFW2M
+	// address := "GARCSHPPYFR65QADDT44IBUD7BXMQS4W2FDV5HEIIJPYALPO52FYFW2M"
+	// resp, err := http.Get("https://friendbot.stellar.org/?addr=" + address)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// defer resp.Body.Close()
+	// body, err := ioutil.ReadAll(resp.Body)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// fmt.Println(string(body))
+	// account, err := horizon.DefaultTestNetClient.LoadAccount(address)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// fmt.Println("Balances for account:", address)
+
+	// for _, balance := range account.Balances {
+	// 	log.Println(balance)
+	// }
+}

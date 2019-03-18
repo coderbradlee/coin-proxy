@@ -1,0 +1,22 @@
+{
+    "operations": [
+        [
+            0,
+            {
+                "fee": {
+                    "total": {
+                        "amount": 100000,
+                        "asset_id": 0
+                    }
+                },
+                "from": 250926091,
+                "to": 223331844,
+                "amount": {
+                    "amount": 100000,
+                    "asset_id": 0
+                },
+                "extensions": {}
+            }
+        ]
+    ]
+}

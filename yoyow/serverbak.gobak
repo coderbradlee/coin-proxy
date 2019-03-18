@@ -1,0 +1,475 @@
+package yoyow
+
+import (
+	// "tokenxx-algorithm-c/params"
+	// "encoding/json"
+	"encoding/json"
+	"io"
+	// "log"
+	"net"
+	// "net/http"
+
+	// "strings"
+	// "sync"
+	// "sync/atomic"
+	// "time"
+	// "encoding/hex"
+	"fmt"
+	// "fmt"
+	// "crypto/rand"
+	// "encoding/binary"
+	"errors"
+	// eosgo "github.com/eoscanada/eos-go"
+	// "github.com/ethereum/go-ethereum/crypto/sha3"
+	// "io/ioutil"
+	// "log"
+	"bytes"
+	"net/http"
+	"net/http/httputil"
+	"time"
+)
+
+type API struct {
+	HttpClient *http.Client
+	BaseURL    string
+	// Signer                  Signer
+	Debug bool
+	// Compress                CompressionType
+	DefaultMaxCPUUsageMS    uint8
+	DefaultMaxNetUsageWords uint32 // in 8-bytes words
+
+	// lastGetInfo      *InfoResp
+	// lastGetInfoStamp time.Time
+	// lastGetInfoLock  sync.Mutex
+
+	// customGetRequiredKeys func(tx *Transaction) ([]ecc.PublicKey, error)
+}
+type YoyowServer struct {
+	API_METHOD string
+	API_URL    string
+	API_PORT   string
+	api        *API
+}
+
+func ApiNew(baseURL string) *API {
+	api := &API{
+		HttpClient: &http.Client{
+			Transport: &http.Transport{
+				Proxy: http.ProxyFromEnvironment,
+				DialContext: (&net.Dialer{
+					Timeout:   30 * time.Second,
+					KeepAlive: 30 * time.Second,
+					DualStack: true,
+				}).DialContext,
+				MaxIdleConns:          100,
+				IdleConnTimeout:       90 * time.Second,
+				TLSHandshakeTimeout:   10 * time.Second,
+				ExpectContinueTimeout: 1 * time.Second,
+				DisableKeepAlives:     true, // default behavior, because of `nodeos`'s lack of support for Keep alives.
+			},
+		},
+		BaseURL: baseURL,
+		// Compress: CompressionZlib,
+	}
+
+	return api
+}
+func New(API_METHOD, API_URL, API_PORT string) *YoyowServer {
+	api := &YoyowServer{
+		API_METHOD: API_METHOD,
+		API_URL:    API_URL,
+		API_PORT:   API_PORT,
+		api:        ApiNew(API_METHOD + "://" + API_URL + ":" + API_PORT),
+	}
+
+	return api
+}
+
+func (s *YoyowServer) GetInfo() (out Witness, err error) {
+	// params := interface{}{nil}
+	err = s.call("rpc", "info", nil, &out)
+	return
+}
+
+var ErrNotFound = errors.New("resource not found")
+
+type M map[string]interface{}
+
+func enc(v interface{}) (io.Reader, error) {
+	if v == nil {
+		return nil, nil
+	}
+
+	cnt, err := json.Marshal(v)
+	if err != nil {
+		return nil, err
+	}
+
+	//fmt.Println("BODY", string(cnt))
+
+	return bytes.NewReader(cnt), nil
+}
+func (api *API) Call(api caller.APIID, method string, args []interface{}, reply interface{}) error {
+
+	// increase request id
+	if api.requestID == math.MaxUint64 {
+		api.requestID = 0
+	}
+	api.requestID++
+	seq := api.requestID
+
+	request := transport.RPCRequest{
+		Method: "call",
+		ID:     caller.requestID,
+		Params: []interface{}{api, method, args},
+	}
+
+	// send Json Rcp request
+	if err := websocket.JSON.Send(caller.conn, request); err != nil {
+		caller.mutex.Lock()
+		delete(caller.pending, seq)
+		caller.mutex.Unlock()
+		return err
+	}
+
+	// wait for the call to complete
+	<-c.Done
+	if c.Error != nil {
+		return c.Error
+	}
+
+	if c.Reply != nil {
+		if err := json.Unmarshal(*c.Reply, reply); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+func (api *API) call(method string, args []interface{}, reply interface{}) error {
+	return api.Call(api.id, method, args, reply)
+}
+func (api *API) GetMarketHistory(base, quote types.ObjectID, bucketSeconds uint32, start, end types.Time) ([]*Bucket, error) {
+	var resp []*Bucket
+	err := api.call("get_market_history", []interface{}{base.String(), quote.String(), bucketSeconds, start, end}, &resp)
+	return resp, err
+}
+
+// func (s *YoyowServer) call(baseAPI, method string, params []interface{}, out interface{}) error {
+// 	reqStruct := &JsonRequest{
+// 		Jsonrpc: "2.0",
+// 		ID:      "1",
+// 		Method:  method,
+// 		Params:  params,
+// 	}
+
+// 	jsonBody, err := enc(reqStruct)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	targetURL := fmt.Sprintf("%s/%s", s.api.BaseURL, baseAPI)
+// 	req, err := http.NewRequest("POST", targetURL, jsonBody)
+// 	if err != nil {
+// 		return fmt.Errorf("NewRequest: %s", err)
+// 	}
+// 	if s.api.Debug {
+// 		// Useful when debugging API calls
+// 		requestDump, err := httputil.DumpRequest(req, true)
+// 		if err != nil {
+// 			fmt.Println(err)
+// 		}
+// 		fmt.Println("-------------------------------")
+// 		fmt.Println(string(requestDump))
+// 		fmt.Println("")
+// 	}
+// 	resp, err := s.api.HttpClient.Do(req)
+// 	if err != nil {
+// 		return fmt.Errorf("%s: %s", req.URL.String(), err)
+// 	}
+// 	defer resp.Body.Close()
+
+// 	var cnt bytes.Buffer
+// 	_, err = io.Copy(&cnt, resp.Body)
+// 	if err != nil {
+// 		return fmt.Errorf("Copy: %s", err)
+// 	}
+
+// 	if resp.StatusCode == 404 {
+// 		return ErrNotFound
+// 	}
+// 	if resp.StatusCode > 299 {
+// 		return fmt.Errorf("%s: status code=%d, body=%s", req.URL.String(), resp.StatusCode, cnt.String())
+// 	}
+
+// 	if s.api.Debug {
+// 		fmt.Println("RESPONSE:")
+// 		fmt.Println(cnt.String())
+// 		fmt.Println("")
+// 	}
+// 	fmt.Println("response:", string(cnt.Bytes()))
+// 	if err := json.Unmarshal(cnt.Bytes(), &out); err != nil {
+// 		return fmt.Errorf("Unmarshal: %s", err)
+// 	}
+
+// 	return nil
+// }
+
+// func (s *YoyowServer) GetAccount(account string) (*eosgo.AccountResp, error) {
+// 	return s.api.GetAccount(eosgo.AccountName(account))
+
+// }
+
+// func (s *YoyowServer) dealWithAmount(amount, symbol string) string {
+// 	if !strings.Contains(amount, ".") {
+// 		return amount + ".0000 " + symbol
+// 	}
+// 	out := strings.Split(amount, ".")
+// 	le := len(out[1])
+// 	if le < 4 {
+// 		for i := 0; i < 4-le; i++ {
+// 			amount += "0"
+// 		}
+// 	}
+// 	return amount + " " + symbol
+// }
+// func (s *YoyowServer) transfer(from, to, amount, userMemo, localurl, localwallet, localpriv, symbol string) (string, error) {
+// 	m := make(eosgo.M)
+// 	// "from": "eosio",
+// 	// "to": "noprom",
+// 	// "quantity": "1.0000 EOS",
+// 	// "memo": "created by noprom"
+// 	m["from"] = from //100eos
+// 	m["to"] = to     //0eos
+// 	amountOut := s.dealWithAmount(amount, symbol)
+// 	m["quantity"] = amountOut // amount + " EOS"
+// 	m["memo"] = userMemo
+// 	ass, err := s.api.ABIJSONToBin("eosio.token", "transfer", m)
+// 	if err != nil {
+// 		log.Println(err)
+// 		return "", err
+// 	}
+// 	// fmt.Println(hex.EncodeToString(ass))
+
+// 	//////////////////////////////////////////////////////////////
+// 	// Account       AccountName       `json:"account"`
+// 	// Name          ActionName        `json:"name"`
+// 	// Authorization []PermissionLevel `json:"authorization,omitempty"`
+// 	// ActionData
+// 	//
+// 	actionData := eosgo.NewActionDataFromHexData(ass)
+// 	pl, err := eosgo.NewPermissionLevel(from + "@active")
+// 	if err != nil {
+// 		log.Println(err)
+// 		return "", err
+// 	}
+// 	action := eosgo.Action{
+// 		Account:       "eosio.token",
+// 		Name:          "transfer",
+// 		Authorization: []eosgo.PermissionLevel{pl},
+// 		ActionData:    actionData,
+// 	}
+// 	//////(api *API) SetSigner(s Signer)
+// 	// NewWalletSigner(api *API, walletName string) *WalletSigner
+// 	// localeosurl := cfg.Eos.API_METHOD + "://" + cfg.Eos.LOCAL_API_URL + ":" + strconv.Itoa(cfg.Eos.LOCAL_API_PORT)
+// 	localapi := eosgo.New(localurl)
+// 	// err = localapi.WalletUnlock(cfg.Eos.WALLET_NAME, cfg.Eos.WALLET_PRIV_KEY)
+// 	err = localapi.WalletUnlock(localwallet, localpriv)
+// 	if err != nil {
+// 		log.Println(err)
+// 		// return "", err
+// 	}
+// 	signer := eosgo.NewWalletSigner(localapi, localwallet)
+// 	s.api.SetSigner(signer)
+// 	///////SignPushActions(a ...*Action) (out *PushTransactionFullResp///
+// 	resp, err := s.api.SignPushActions(&action)
+// 	if err != nil {
+// 		log.Println(err)
+// 		return "", err
+// 	}
+// 	fmt.Println("TransactionID:", resp.TransactionID)
+// 	///////////////////////////////////////
+// 	err = localapi.WalletLock(localwallet)
+// 	if err != nil {
+// 		log.Println(err)
+// 		// return "", err
+// 	}
+// 	return resp.TransactionID, nil
+// }
+// func (s *YoyowServer) checkPass(memo, pass string) error {
+// 	b, err := ioutil.ReadFile("keys/eos/" + memo)
+// 	if err != nil {
+// 		// fmt.Print(err)
+// 		log.Println("read file:", err)
+// 		return errors.New("open file error!")
+// 	}
+// 	str := string(b)
+// 	log.Println(memo+pass, ":", str)
+
+// 	hash := sha3.NewKeccak256()
+
+// 	var buf []byte
+// 	//hash.Write([]byte{0xcc})
+// 	hash.Write([]byte(memo + pass))
+// 	buf = hash.Sum(buf)
+// 	if str != hex.EncodeToString(buf) {
+// 		log.Println("password error:", str, "!=", hex.EncodeToString(buf))
+// 		return errors.New("wrong password!")
+// 	}
+// 	return nil
+// }
+
+// type ActionResult struct {
+// 	TransactionId string `json:"transactionId"`
+// 	Memo          string `json:"memo"`
+// 	Seq           string `json:"seq"`
+// }
+
+// //返回此笔交易的转入金额
+// // VerifyIn(account, seq, symbol)
+// func (s *YoyowServer) VerifyIn(inAccount, seq, symbol string) ([]ActionResult, error) {
+// 	bestPosString := seq
+// 	bestPos, err := strconv.ParseInt(bestPosString, 10, 64)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	{
+// 		//获取最新的交易sequence
+// 		req := eosgo.GetActionsRequest{
+// 			AccountName: eosgo.AccountName(inAccount),
+// 			Pos:         -1,
+// 			Offset:      -1,
+// 		}
+
+// 		actions, err := s.api.GetActions(req)
+
+// 		if err != nil {
+// 			log.Println(err)
+// 			return nil, err
+// 		}
+// 		for _, v := range actions.Actions {
+// 			// bestPos = v.Trace.Receipt.GlobalSequence
+// 			bestPos = v.AccountSeq
+// 		}
+// 	}
+// 	{
+// 		seqence := seq
+
+// 		seqInt, err := strconv.ParseInt(seqence, 10, 64)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		offset := bestPos - seqInt
+// 		if offset > 30 {
+// 			offset = 30
+// 		}
+// 		log.Println("seqInt:", seqInt, " bestpos:", bestPos, " offset:", offset)
+// 		// 	pos INT                     sequence number of action for this account, -1 for last
+// 		//   offset INT                  get actions [pos,pos+offset] for positive offset or [pos-offset,pos) for negative offset
+// 		req := eosgo.GetActionsRequest{
+// 			AccountName: eosgo.AccountName(inAccount),
+// 			// Pos:         -1,
+// 			// Offset:      seqInt - 1,
+// 			Pos:    seqInt,
+// 			Offset: offset,
+// 		}
+
+// 		actions, err := s.api.GetActions(req)
+
+// 		if err != nil {
+// 			log.Println(err)
+// 			return nil, err
+// 		}
+// 		log.Println("actions len:", len(actions.Actions))
+// 		////返回此memo下最新的一条的交易id
+// 		// var bestTransactionID string
+// 		// var bestQuantity string
+// 		var ret []ActionResult
+// 		for _, v := range actions.Actions {
+// 			// fmt.Println("BlockTime:", fmt.Sprintf("%q", v.BlockTime.Format(eos.JSONTimeFormat)))
+// 			// log.Println("BlockNum:", v.BlockNum)
+// 			// log.Println("TransactionID:", v.Trace.TransactionID.String())
+// 			// fmt.Println("GlobalSequence:", v.Trace.Receipt.GlobalSequence)
+// 			// fmt.Println("ReceiveSequence:", v.Trace.Receipt.ReceiveSequence)
+// 			fmt.Println("AccountSeq:", v.AccountSeq)
+// 			actData := v.Trace.Action.ActionData.Data
+// 			dataMap, ok := actData.(map[string]interface{})
+// 			if !ok {
+// 				log.Println("dataMap not ok")
+// 				continue
+// 			}
+// 			from, ok := dataMap["from"].(string)
+// 			if !ok {
+// 				log.Println("from not ok")
+// 				continue
+// 			}
+// 			to, ok := dataMap["to"].(string)
+// 			if !ok {
+// 				log.Println("to not ok")
+// 				continue
+// 			}
+// 			quantity, ok := dataMap["quantity"].(string)
+// 			if !ok {
+// 				log.Println("quantity not ok")
+// 				continue
+// 			}
+// 			memos, ok := dataMap["memo"].(string)
+// 			if !ok {
+// 				log.Println("memo not ok")
+// 				continue
+// 			}
+// 			log.Println("from:", from, " to:", to, " quantity:", quantity, " memo:", memos)
+// 			out := strings.Split(quantity, " ")
+
+// 			log.Println("symbol:", out[1])
+
+// 			if out[1] == symbol {
+// 				// return quantity, nil
+// 				// bestTransactionID = v.Trace.TransactionID.String()
+// 				// bestQuantity = quantity
+// 				temp := ActionResult{
+// 					TransactionId: v.Trace.TransactionID.String(),
+// 					Memo:          memos,
+// 					Seq:           fmt.Sprintf("%d", v.AccountSeq),
+// 				}
+// 				ret = append(ret, temp)
+// 			}
+// 		}
+// 		// if bestTransactionID != "" && bestQuantity != "" {
+// 		// 	return bestTransactionID, bestQuantity, nil
+// 		// }
+// 		if len(ret) == 0 {
+// 			return nil, errors.New("not found transaction")
+// 		}
+// 		return ret, nil
+// 	}
+// }
+// func (s *YoyowServer) VerifyOut(transactionId string) (bool, error) {
+// 	// GetTransaction(id string) (out *TransactionResp, err error)
+// 	trs, err := s.api.GetTransaction2(transactionId)
+// 	// outtrx, _ := json.Marshal(trs)
+// 	// fmt.Println("json:", string(outtrx))
+// 	if err != nil {
+// 		log.Println(err)
+// 		return false, errors.New("transaction not found!")
+// 	}
+// 	if trs.Trans.Receipt.Status != eosgo.TransactionStatusExecuted {
+// 		return false, errors.New("transaction still not executed!")
+// 	}
+// 	// trs.trx
+// 	// test := trs.Receipt.PackedTransaction.ID.String()
+// 	// fmt.Println("test:", test)
+// 	// return trs.ID.String(), nil
+// 	return true, nil
+// }
+
+// // Send(to, memo, pass, amount)
+// // (from, to, amount, userMemo, localeosurl, cfg.Eos.WALLET_NAME, cfg.Eos.WALLET_PRIV_KEY, symbol)
+// func (s *YoyowServer) Send(from, to, amount, userMemo, localurl, localwallet, localpriv, symbol string) (string, error) {
+// 	// err := s.checkPass(memo, pass)
+// 	// if err != nil {
+// 	// 	return "", err
+// 	// }
+
+// 	/////转账
+// 	return s.transfer(from, to, amount, userMemo, localurl, localwallet, localpriv, symbol)
+// }

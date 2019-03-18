@@ -1,0 +1,33 @@
+{
+    "jsonrpc": "2.0",
+    "method": "call",
+    "params": [
+        0,
+        "get_transaction_id",
+        [
+            {
+                "operations": [
+                    [
+                        0,
+                        {
+                            "fee": {
+                                "total": {
+                                    "amount": 100000,
+                                    "asset_id": 0
+                                }
+                            },
+                            "from": 250926091,
+                            "to": 223331844,
+                            "amount": {
+                                "amount": 100000,
+                                "asset_id": 0
+                            },
+                            "extensions": {}
+                        }
+                    ]
+                ]
+            }
+        ]
+    ],
+    "id": 1
+}

@@ -1,0 +1,154 @@
+    listenPort=":18888"
+    httpuser="7MoETepmSthUn5BN"
+    httppass="9Kb-t7w-zRV-pS7"
+[omni]
+    host = "127.0.0.1"
+    port=18332
+    username="test"
+    password="test"
+    account="mr-usdt"
+    tokenid=31
+    walletPass="mserTwwHW7BPfRsy"
+    net="mainnet"
+[eos]
+    NODE_PRODUCER_NAME="monstereos12" #not used
+    NODE_PUB_KEY="EOS7ULmcksapBYTXvjH62eDzCxiNtaciDzsbCzp8oh1cjGnN1KWTS"#not used
+    API_PORT=80
+    API_URL="api.hkeos.com"
+    LOCAL_API_PORT=9000
+    LOCAL_API_URL="127.0.0.1"
+    API_METHOD="http"
+    WALLET_NAME="mr-eos"
+    WALLET_PRIV_KEY="PW5Hz5vrXaXE9fCf2D23pwQprMcHtg7wqXWejYSHGr3ZFEBrhUAV3"
+    TRANSACTION_EXPIRATION_DELAY=30
+    Account_History="https://api.eospark.com/api?module=account&action=get_account_related_trx_info&apikey=8796cf9d1887a7f4e190315585795573&account=%s&page=%s&size=999&symbol=EOS&code=eosio.token"
+[yoyow]
+    NODE_PRODUCER_NAME="278137833"#not used
+    API_PORT=8091
+    API_URL="127.0.0.1"
+    API_METHOD="http"
+    WALLET_PRIV_KEY="9DcsTZLj1M1E"
+[bchabc]
+    host = "127.0.0.1"
+    port=8332
+    username="test"
+    password="test"
+    account="mr-bch"
+    walletPass="testpass"
+[trx]
+    #host = "10.47.109.13"# used
+    #port="8090"# used
+    host = "api.trongrid.io"# used
+    port="443"# used
+    method="https"
+    net="mainnet"# used
+    private="A5237BC1F267B0730A3DEECCAA67A9778D60FB10ED12060E20FB664F02D33909"
+    localurl="http://localhost:8090"
+[xrp]
+    host = "127.0.0.1"
+    port="5005"
+    username="test"
+    password="test"
+    #host = "s.altnet.rippletest.net"
+    #port="51234"
+    #username=""
+    #password=""
+    private="snoPBrXtMeMyMHUVTgbuqAfg1SUTb"
+[ltc]
+    host = "127.0.0.1"
+    port=9332
+    username="test"
+    password="test"
+    account="mr-ltc"
+    walletPass="testpass"
+    net="testnet"
+[etc]
+    host = "127.0.0.1"
+    port="8545"
+    addressPass="testpass"
+[ada]
+    API_PORT=28090
+    API_URL="127.0.0.1"
+    API_METHOD="https"
+    WALLET_PRIV_KEY="9DcsTZLj1M1E"#not used
+    AccountIndex="2149473377"
+    WalletId="Ae2tdPwUPEZK3qR3RkcPfdeYAVWw3EsM7SZTX3P6h9BtQCM5NdFP47poz34"
+    SpendingPassword="6383ba0ac13d92957745725008907acaf4613c910764f04959030e1b81c603b9"
+    Capath="/root/ada/cardano-sl/state-wallet-mainnet/tls/client"
+[true]
+    host = "127.0.0.1"
+    port="8545"
+    addressPass="testpass"
+[neo]
+    url = "http://localhost:20332"
+    walletPass="123456"
+    neoAssetID="0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b"
+    gasAssetID="0x602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7"
+[zcash]
+    host = "127.0.0.1"
+    port=8332
+    username="test"
+    password="test"
+    account="mr-zcash"
+    walletPass="testpass" #not used
+[dash]
+    host = "127.0.0.1"
+    port=8332
+    username="test"
+    password="test"
+    account="mr-dash"
+    walletPass="testpass"
+[iota]
+    #host = "127.0.0.1"
+    #port="14265"
+    #method="http"
+    #host = "nodes.devnet.thetangle.org"
+    #host="powbox.testnet.iota.org"
+    host="nodes.thetangle.org"
+    port="443"
+    method="https"
+    #seed="HZVEINVKVIKGFRAWRTRXWD9JLIYLCQNCXZRBLDETPIQGKZJRYKZXLTV9JNUVBIAHAGUZVIQWIAWDZ9ACW"
+    #seed="VOTZVMGDOPEV9CHDCYYXPPSBKEAYGRHFRICNRTFYJWLQNF9JIXZXAACUFXRWCXWD9JLIYLCQNCHDCYYXP"
+    #seed="VOTZVMGDOPEV9CHDCYYXPPSBKEAYGRHFRICNRTFYJWLQNF9JIXZXAACUFXRWCXWD9JLIYLCQNCHDCYYX9"
+    seed="GKBJOTDQ9BCCMOLMD9ISEXASPKODFCLVLSUEHYJQJC9WOKKKMTVKSYXGXWPCGZDWV9SWRRUHOBDDZF9PD" #used for production
+[ont]
+    host = "127.0.0.1"
+    port="20336"
+    encryptFilePass="123456"
+    wallet="/root/ont/wallet.dat"
+[xlm]
+    url="https://horizon-testnet.stellar.org"
+    #url="http://localhost:8000"
+    seed="SCFOSUKP475FGFM4XOEWRPNSN5SBT3CUZQ6UN5357LG6ILZ3LYLXJ4JM"
+    public="GARCSHPPYFR65QADDT44IBUD7BXMQS4W2FDV5HEIIJPYALPO52FYFW2M"
+    networkpass="Test SDF Network ; September 2015"
+
+    #PublicNetworkPassphrase = "Public Global Stellar Network ; September 2015"
+	#TestNetworkPassphrase = "Test SDF Network ; September 2015"
+[xmr]
+    url = "http://127.0.0.1:18089/json_rpc"
+    username= "test"#not used
+    password= "test"#not used
+[xmc]
+    url = "http://127.0.0.1:18089/json_rpc"
+    username= "test"#not used
+    password= "test"#not used
+[ipfs]
+    url = "localhost:5001"
+    peerid="QmZnrtGXvFzwTXjtykQRMhrxKApZcy8ghUaYi9gRnzUY1b"
+[btc]
+    host = "127.0.0.1"
+    port=8332
+    username="test"
+    password="test"
+    account="mr-usdt"
+    tokenid=1
+    walletPass="mr-usdttest"
+    net="testnet"
+[bchsv]
+    host = "127.0.0.1"
+    port=8332
+    username="test"
+    password="test"
+    account="mr-bchsv"
+    walletPass="testpass"    

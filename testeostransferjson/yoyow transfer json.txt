@@ -1,0 +1,43 @@
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "ref_block_num": 57170,
+    "ref_block_prefix": 852086171,
+    "expiration": "2018-04-15T03:18:33",
+    "operations": [
+      [
+        0,
+        {
+          "fee": {
+            "total": {
+              "amount": 20898,
+              "asset_id": 0
+            },
+            "options": {
+              "from_csaf": {
+                "amount": 20898,
+                "asset_id": 0
+              }
+            }
+          },
+          "from": 250926091,
+          "to": 209414065,
+          "amount": {
+            "amount": 1000000,
+            "asset_id": 0
+          },
+          "memo": {
+            "from": "YYW7SpC4QLY1LRRxFQ2hbYHdAyQo88L8qnPJcDJkiRMugcnFGUGvo",
+            "to": "YYW8PK8NtXW6JjtxqPV8QTgw4ejPEg4FgVeNV1maZDGzzNoEbgmr2",
+            "nonce": "7783743918290282490",
+            "message": "4468a7f3a5ac7fbf8125856381673030"
+          }
+        }
+      ]
+    ],
+    "signatures": [
+      "1f0a075215760089cf879b67ee6ba0aaaffa9408cd48c9040eee562909a8d67f5f7bbbb6401aabc69c00cd5d212f65b41204651f33442dc5b5b0056ce38f06c10e"
+    ]
+  }
+}
