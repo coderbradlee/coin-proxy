@@ -1,10 +1,10 @@
 package main
 
 import (
-	"./xlog"
+	"github.com/lzxm160/coin-proxy/xlog"
 	"fmt"
 	"log"
-	"./martini"
+	"github.com/lzxm160/coin-proxy/martini"
 	"net/http"
 )
 

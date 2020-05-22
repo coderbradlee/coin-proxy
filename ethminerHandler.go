@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"./rpcclient"
+	"github.com/lzxm160/coin-proxy/rpcclient"
 	"log"
 )
 

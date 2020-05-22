@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/base64"
-	"./martini"
+	"github.com/lzxm160/coin-proxy/martini"
 	"net/http"
 	"strings"
 	"crypto/sha256"

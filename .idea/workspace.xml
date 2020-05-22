@@ -3,9 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="394ab749-6b6c-4c40-946b-a3896e00bfcd" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/martini/recovery.go" beforeDir="false" afterPath="$PROJECT_DIR$/martini/recovery.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/martini/return_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/martini/return_handler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tools/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/tools/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic.go" beforeDir="false" afterPath="$PROJECT_DIR$/basic.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ethminerHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/ethminerHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,9 +46,9 @@
       <screen x="1366" y="81" width="1440" height="819" />
     </state>
     <state x="1578" y="81" key="#GOROOT/0.81.1366.687/1366.81.1440.819@1366.81.1440.819" timestamp="1590129052779" />
-    <state x="1670" y="149" width="831" height="682" key="find.popup" timestamp="1590141216118">
+    <state x="1670" y="149" width="831" height="682" key="find.popup" timestamp="1590141439337">
       <screen x="1366" y="81" width="1440" height="819" />
     </state>
-    <state x="1670" y="149" width="831" height="682" key="find.popup/0.81.1366.687/1366.81.1440.819@1366.81.1440.819" timestamp="1590141216118" />
+    <state x="1670" y="149" width="831" height="682" key="find.popup/0.81.1366.687/1366.81.1440.819@1366.81.1440.819" timestamp="1590141439337" />
   </component>
 </project>
