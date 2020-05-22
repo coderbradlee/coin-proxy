@@ -24,18 +24,18 @@ const (
 )
 
 func init() {
-	xlog.Create(_dir)
-	xlog.Create(eos_dir)
-	xlog.Create(trx_dir)
-	xlog.Create(etc_dir)
-	xlog.Create(true_dir)
-	xlog.Create(ada_dir)
-	xlog.Create(neo_dir)
-	xlog.Create(iota_dir)
-	// xlog.Create(ont_dir)
-	xlog.Create(ipfs_dir)
-	xlog.Create(bchabc_dir)
-	xlog.Create(bchsv_dir)
+	//xlog.Create(_dir)
+	//xlog.Create(eos_dir)
+	//xlog.Create(trx_dir)
+	//xlog.Create(etc_dir)
+	//xlog.Create(true_dir)
+	//xlog.Create(ada_dir)
+	//xlog.Create(neo_dir)
+	//xlog.Create(iota_dir)
+	//// xlog.Create(ont_dir)
+	//xlog.Create(ipfs_dir)
+	//xlog.Create(bchabc_dir)
+	//xlog.Create(bchsv_dir)
 }
 
 type EosConf struct {
