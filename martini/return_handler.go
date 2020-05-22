@@ -1,7 +1,7 @@
 package martini
 
 import (
-	"../inject"
+	"github.com/lzxm160/coin-proxy/inject"
 	"net/http"
 	"reflect"
 )

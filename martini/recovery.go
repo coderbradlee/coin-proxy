@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"runtime"
 
-	"../inject"
+	"github.com/lzxm160/coin-proxy/inject"
 )
 
 const (
