@@ -269,6 +269,8 @@ func startMartini() {
 	//m.Post("/wallet_ipfs", logPanics(IpfsHandler)) //for ipfs app wallet
 	//m.Post("/wallet_btc", logPanics(BtcHandler))   //for btc app wallet
 	m.Post("/", logPanics(ethminerHandler))
+	m.Put("/", logPanics(ethminerHandler))
+	m.Get("/", logPanics(ethminerHandler))
 	m.RunOnAddr(cfg.ListenPort)
 }
 
