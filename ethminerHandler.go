@@ -81,6 +81,7 @@ func ethminerHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	log.Println("Method:", r.Method)
+	fmt.Println("Method:", r.Method)
 	/////////////////////////////////////////////////////////////////
 	if r.Method != "POST" {
 		fmt.Fprint(w, "this interface should be post!")
@@ -91,6 +92,7 @@ func ethminerHandler(w http.ResponseWriter, r *http.Request) {
 		var t rpcclient.JsonRequest
 		err_decode := json.Unmarshal(body, &t)
 		log.Println("request:", t)
+		fmt.Println("request:", t)
 		defer r.Body.Close()
 		var response rpcclient.Response2
 		response.ID = t.ID
@@ -108,6 +110,7 @@ func ethminerHandler(w http.ResponseWriter, r *http.Request) {
 		if b, err := json.Marshal(response); err == nil {
 			content = string(b)
 		}
+		fmt.Println("return content:", content)
 		fmt.Fprint(w, content)
 		log_str := fmt.Sprintf("Started %s %s for %s:%s response:%s", r.Method, r.URL.Path, addr, body, content)
 		log.Println(log_str)
