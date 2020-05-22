@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="394ab749-6b6c-4c40-946b-a3896e00bfcd" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ethminerHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/ethminerHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +34,7 @@
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.tried.to.enable.integration.dep.integrator" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="E:/WNT/code/ethpool" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="watcher.settings" />
@@ -57,6 +55,10 @@
       <screen x="1366" y="81" width="1440" height="819" />
     </state>
     <state x="1664" y="213" key="EditFileWatcherDialog/0.81.1366.687/1366.81.1440.819@1366.81.1440.819" timestamp="1590143139978" />
+    <state x="1816" y="187" key="FileChooserDialogImpl" timestamp="1590143804151">
+      <screen x="1366" y="81" width="1440" height="819" />
+    </state>
+    <state x="1816" y="187" key="FileChooserDialogImpl/0.81.1366.687/1366.81.1440.819@1366.81.1440.819" timestamp="1590143804151" />
     <state x="1456" y="81" key="SettingsEditor" timestamp="1590143140625">
       <screen x="1366" y="81" width="1440" height="819" />
     </state>
