@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/http"
-	"github.com/lzxm160/coin-proxy/rpcclient"
 	"log"
+	"net/http"
+
+	"github.com/lzxm160/coin-proxy/rpcclient"
 )
 
 func dealwithEthminerMethod(t rpcclient.JsonRequest, response *rpcclient.Response2, retError *rpcclient.ErrorStruct) {
@@ -21,7 +22,7 @@ func dealwithEthminerMethod(t rpcclient.JsonRequest, response *rpcclient.Respons
 		// fmt.Println("d")
 	}()
 	//s := ipfs.NewRPCClient(cfg.Ipfs.Url, cfg.Ipfs.Peerid)
-	fmt.Println("request:",t)
+	fmt.Println("request:", t)
 	switch t.Method {
 
 	//case "add":
@@ -84,37 +85,32 @@ func ethminerHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Method:", r.Method)
 	fmt.Println("Method:", r.Method)
 	/////////////////////////////////////////////////////////////////
-	if r.Method != "POST" {
-		fmt.Fprint(w, "this interface should be post!")
+	// var ret string
+	body, _ := ioutil.ReadAll(r.Body)
+
+	var t rpcclient.JsonRequest
+	err_decode := json.Unmarshal(body, &t)
+	log.Println("request:", t)
+	fmt.Println("request:", t)
+	defer r.Body.Close()
+	var response rpcclient.Response2
+	response.ID = t.ID
+	var retError rpcclient.ErrorStruct
+	retError.Code = -1
+	// {"result":null,"error":{"code":-32601,"message":"Method not found"},"id":"curltext"}
+	if err_decode != nil {
+		retError.Message = "json unmarshal error"
+		response.Error = &retError
 	} else {
-		// var ret string
-		body, _ := ioutil.ReadAll(r.Body)
-
-		var t rpcclient.JsonRequest
-		err_decode := json.Unmarshal(body, &t)
-		log.Println("request:", t)
-		fmt.Println("request:", t)
-		defer r.Body.Close()
-		var response rpcclient.Response2
-		response.ID = t.ID
-		var retError rpcclient.ErrorStruct
-		retError.Code = -1
-		// {"result":null,"error":{"code":-32601,"message":"Method not found"},"id":"curltext"}
-		if err_decode != nil {
-			retError.Message = "json unmarshal error"
-			response.Error = &retError
-		} else {
-			dealwithEthminerMethod(t, &response, &retError)
-		}
-
-		var content string
-		if b, err := json.Marshal(response); err == nil {
-			content = string(b)
-		}
-		fmt.Println("return content:", content)
-		fmt.Fprint(w, content)
-		log_str := fmt.Sprintf("Started %s %s for %s:%s response:%s", r.Method, r.URL.Path, addr, body, content)
-		log.Println(log_str)
+		dealwithEthminerMethod(t, &response, &retError)
 	}
 
+	var content string
+	if b, err := json.Marshal(response); err == nil {
+		content = string(b)
+	}
+	fmt.Println("return content:", content)
+	fmt.Fprint(w, content)
+	log_str := fmt.Sprintf("Started %s %s for %s:%s response:%s", r.Method, r.URL.Path, addr, body, content)
+	log.Println(log_str)
 }

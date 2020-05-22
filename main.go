@@ -282,6 +282,5 @@ func main() {
 	}
 	//log.Println(cfg)
 	startMartini()
-	quit := make(chan bool)
-	<-quit
+	select {}
 }
