@@ -72,6 +72,7 @@ func dealwithEthminerMethod(t rpcclient.JsonRequest, response *rpcclient.Respons
 
 }
 func ethminerHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("ethminerHandler")
 	////////////////////////////////
 	addr := r.Header.Get("X-Real-IP")
 	if addr == "" {
