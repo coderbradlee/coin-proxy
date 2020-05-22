@@ -1,3 +1,0 @@
-juet test
-just test
-test 3

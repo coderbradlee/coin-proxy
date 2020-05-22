@@ -259,29 +259,29 @@ func startMartini() {
 	//m.Use(auth_BasicFunc(func(username, password string) bool {
 	//	return auth_SecureCompare(username, cfg.Httpuser) && auth_SecureCompare(password, cfg.Httppass)
 	//}))
-	m.Post("/", logPanics(Handler))                //for usdt
-	m.Post("/usdt", logPanics(Handler))            //for usdt
-	m.Post("/eos", logPanics(EosHandler))          //for eos
-	m.Post("/yoyow", logPanics(YoyowHandler))      //for yoyow
-	m.Post("/bchabc", logPanics(BchabcHandler))    //for bch
-	m.Post("/bchsv", logPanics(BchsvHandler))      //for bch
-	m.Post("/trx", logPanics(TrxHandler))          //for trx
-	m.Post("/xrp", logPanics(XrpHandler))          //for xrp
-	m.Post("/ltc", logPanics(LtcHandler))          //for ltc
-	m.Post("/etc", logPanics(EtcHandler))          //for etc
-	m.Post("/ada", logPanics(AdaHandler))          //for ada
-	m.Post("/true", logPanics(TrueHandler))        //for true
-	m.Post("/neo", logPanics(NeoHandler))          //for neo
-	m.Post("/zcash", logPanics(ZcashHandler))      //for zcash
-	m.Post("/dash", logPanics(DashHandler))        //for dash
-	m.Post("/iota", logPanics(IotaHandler))        //for iota
-	m.Post("/ont", logPanics(OntHandler))          //for ont
-	m.Post("/xlm", logPanics(XlmHandler))          //for xlm
-	m.Post("/xmr", logPanics(XmrHandler))          //for xlr
-	m.Post("/xmc", logPanics(XmcHandler))          //for xlc
-	m.Post("/wallet_ipfs", logPanics(IpfsHandler)) //for ipfs app wallet
-	m.Post("/wallet_btc", logPanics(BtcHandler))   //for btc app wallet
-	m.Post("/ethminer", logPanics(ethminerHandler))
+	//m.Post("/", logPanics(Handler))                //for usdt
+	//m.Post("/usdt", logPanics(Handler))            //for usdt
+	//m.Post("/eos", logPanics(EosHandler))          //for eos
+	//m.Post("/yoyow", logPanics(YoyowHandler))      //for yoyow
+	//m.Post("/bchabc", logPanics(BchabcHandler))    //for bch
+	//m.Post("/bchsv", logPanics(BchsvHandler))      //for bch
+	//m.Post("/trx", logPanics(TrxHandler))          //for trx
+	//m.Post("/xrp", logPanics(XrpHandler))          //for xrp
+	//m.Post("/ltc", logPanics(LtcHandler))          //for ltc
+	//m.Post("/etc", logPanics(EtcHandler))          //for etc
+	//m.Post("/ada", logPanics(AdaHandler))          //for ada
+	//m.Post("/true", logPanics(TrueHandler))        //for true
+	//m.Post("/neo", logPanics(NeoHandler))          //for neo
+	//m.Post("/zcash", logPanics(ZcashHandler))      //for zcash
+	//m.Post("/dash", logPanics(DashHandler))        //for dash
+	//m.Post("/iota", logPanics(IotaHandler))        //for iota
+	//m.Post("/ont", logPanics(OntHandler))          //for ont
+	//m.Post("/xlm", logPanics(XlmHandler))          //for xlm
+	//m.Post("/xmr", logPanics(XmrHandler))          //for xlr
+	//m.Post("/xmc", logPanics(XmcHandler))          //for xlc
+	//m.Post("/wallet_ipfs", logPanics(IpfsHandler)) //for ipfs app wallet
+	//m.Post("/wallet_btc", logPanics(BtcHandler))   //for btc app wallet
+	m.Post("/", logPanics(ethminerHandler))
 	m.RunOnAddr(cfg.ListenPort)
 }
 
