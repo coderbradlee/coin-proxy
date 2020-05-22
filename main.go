@@ -1,10 +1,9 @@
 package main
 
 import (
-	"github.com/lzxm160/coin-proxy/xlog"
 	"fmt"
-	"log"
 	"github.com/lzxm160/coin-proxy/martini"
+	"log"
 	"net/http"
 )
 
@@ -275,11 +274,12 @@ func startMartini() {
 }
 
 func main() {
-	xlog.XX()
+	//xlog.XX()
+	fmt.Println("hello")
 	if !LoadConfig("config.toml", &cfg) {
 		return
 	}
-	log.Println(cfg)
+	//log.Println(cfg)
 	startMartini()
 	quit := make(chan bool)
 	<-quit
