@@ -5,16 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	// "bytes"
-	// "time"
-	// "errors"
-	// "./bch"
 	"./rpcclient"
 	"log"
-	// "strconv"
-	"./ipfs"
-	// "github.com/sasaxie/go-client-api/service"
-	// "encoding/hex"
 )
 
 func dealwithEthminerMethod(t rpcclient.JsonRequest, response *rpcclient.Response2, retError *rpcclient.ErrorStruct) {
@@ -28,51 +20,51 @@ func dealwithEthminerMethod(t rpcclient.JsonRequest, response *rpcclient.Respons
 		}
 		// fmt.Println("d")
 	}()
-	s := ipfs.NewRPCClient(cfg.Ipfs.Url, cfg.Ipfs.Peerid)
+	//s := ipfs.NewRPCClient(cfg.Ipfs.Url, cfg.Ipfs.Peerid)
 	fmt.Println("request:",t)
 	switch t.Method {
 
-	case "add":
-		var key string
-		var value string
-		if len(t.Params) > 1 {
-			key = fmt.Sprintf("%v", t.Params[0])
-			value = fmt.Sprintf("%v", t.Params[1])
-		} else {
-			retError.Message = "wrong params"
-			response.Error = retError
-			return
-		}
-		b, err := s.Add(key, value, ipfs_dir)
-		if err != nil {
-			retError.Message = err.Error()
-			response.Error = retError
-		} else {
-			log.Println("add:", b)
-			bytes, _ := json.Marshal(b)
-			response.Result = bytes
-			response.Error = nil
-		}
-	case "get":
-		var pass string
-		if len(t.Params) > 0 {
-			pass = fmt.Sprintf("%v", t.Params[0])
-		} else {
-			retError.Message = "wrong params"
-			response.Error = retError
-			return
-		}
-		// change, points, balance, err := s.GetBalance(addr)
-		b, err := s.Get(pass, ipfs_dir)
-		if err != nil {
-			retError.Message = err.Error()
-			response.Error = retError
-		} else {
-			log.Println("Get:", b)
-			bytes, _ := json.Marshal(b)
-			response.Result = bytes
-			response.Error = nil
-		}
+	//case "add":
+	//	//var key string
+	//	//var value string
+	//	if len(t.Params) > 1 {
+	//		key = fmt.Sprintf("%v", t.Params[0])
+	//		value = fmt.Sprintf("%v", t.Params[1])
+	//	} else {
+	//		retError.Message = "wrong params"
+	//		response.Error = retError
+	//		return
+	//	}
+	//	//b, err := s.Add(key, value, ipfs_dir)
+	//	//if err != nil {
+	//	//	retError.Message = err.Error()
+	//	//	response.Error = retError
+	//	//} else {
+	//	//	log.Println("add:", b)
+	//	//	bytes, _ := json.Marshal(b)
+	//	//	response.Result = bytes
+	//	//	response.Error = nil
+	//	//}
+	//case "get":
+	//	var pass string
+	//	if len(t.Params) > 0 {
+	//		pass = fmt.Sprintf("%v", t.Params[0])
+	//	} else {
+	//		retError.Message = "wrong params"
+	//		response.Error = retError
+	//		return
+	//	}
+	//	// change, points, balance, err := s.GetBalance(addr)
+	//	b, err := s.Get(pass, ipfs_dir)
+	//	if err != nil {
+	//		retError.Message = err.Error()
+	//		response.Error = retError
+	//	} else {
+	//		log.Println("Get:", b)
+	//		bytes, _ := json.Marshal(b)
+	//		response.Result = bytes
+	//		response.Error = nil
+	//	}
 	default:
 		retError.Message = "Method not found"
 		response.Error = retError

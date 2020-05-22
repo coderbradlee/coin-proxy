@@ -2,23 +2,10 @@ package main
 
 import (
 	"./xlog"
-	// "context"
-	// "crypto/ecdsa"
-	_ "encoding/hex"
 	"fmt"
 	"log"
-	// "math/big"
-	// "time"
 	"./martini"
 	"net/http"
-	// "./eosgo-client/common"
-	// "./eosgo-client/rpc"
-	// yoyow "./yoyow"
-	// "encoding/json"
-	// eos "github.com/eoscanada/eos-go"
-	// yoyow "github.com/scorum/bitshares-go"
-	// "github.com/scorum/bitshares-go/types"
-	// "strconv"
 )
 
 const (
