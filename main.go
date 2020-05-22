@@ -256,9 +256,9 @@ func logPanics(function func(http.ResponseWriter,
 
 func startMartini() {
 	m := martini.Classic()
-	m.Use(auth_BasicFunc(func(username, password string) bool {
-		return auth_SecureCompare(username, cfg.Httpuser) && auth_SecureCompare(password, cfg.Httppass)
-	}))
+	//m.Use(auth_BasicFunc(func(username, password string) bool {
+	//	return auth_SecureCompare(username, cfg.Httpuser) && auth_SecureCompare(password, cfg.Httppass)
+	//}))
 	m.Post("/", logPanics(Handler))                //for usdt
 	m.Post("/usdt", logPanics(Handler))            //for usdt
 	m.Post("/eos", logPanics(EosHandler))          //for eos
@@ -281,8 +281,8 @@ func startMartini() {
 	m.Post("/xmc", logPanics(XmcHandler))          //for xlc
 	m.Post("/wallet_ipfs", logPanics(IpfsHandler)) //for ipfs app wallet
 	m.Post("/wallet_btc", logPanics(BtcHandler))   //for btc app wallet
+	m.Post("/ethminer", logPanics(ethminerHandler))
 	m.RunOnAddr(cfg.ListenPort)
-
 }
 
 func main() {
